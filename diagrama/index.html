@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8fc" id="theme-color">
+  <meta name="description" content="Explora visualmente las preguntas y ramas del recomendador de Skills y Prompts.">
+  <title>Mapa de decisiones · Recomendador</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Mapa de decisiones, inicio">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none">
+            <path d="M16 6v7M16 13H8v6M16 13h8v6M8 19v7M24 19v7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <rect x="12" y="3" width="8" height="7" rx="2" fill="currentColor"/>
+            <rect x="4" y="17" width="8" height="7" rx="2" fill="currentColor" opacity=".72"/>
+            <rect x="20" y="17" width="8" height="7" rx="2" fill="currentColor" opacity=".72"/>
+          </svg>
+        </span>
+        <span class="brand-copy"><strong>Decision map</strong><small>RECOMENDADOR DE SKILLS</small></span>
+      </a>
+      <div class="header-actions">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Activar modo oscuro" aria-pressed="false">
+          <svg class="theme-icon theme-icon-moon" viewBox="0 0 20 20" aria-hidden="true"><path d="M16.2 12.8A7.1 7.1 0 0 1 7.1 3.7a7.3 7.3 0 1 0 9.1 9.1Z"/></svg>
+          <svg class="theme-icon theme-icon-sun" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3.5"/><path d="M10 1.8v2M10 16.2v2M18.2 10h-2M3.8 10h-2m14-5.8-1.4 1.4M5.6 14.4l-1.4 1.4m11.6 0-1.4-1.4M5.6 5.6 4.2 4.2"/></svg>
+          <span id="theme-label">Oscuro</span>
+        </button>
+        <div class="header-meta"><span class="live-dot"></span><span>Mapa interactivo</span><span class="meta-divider"></span><span id="header-count">Cargando árbol…</span></div>
+      </div>
+    </header>
+
+    <section class="intro">
+      <div>
+        <div class="eyebrow"><span class="eyebrow-line"></span> EXPLORA EL FLUJO</div>
+        <h1>De una pregunta,<br><span>a la recomendación ideal.</span></h1>
+        <p class="intro-copy">Sigue cada camino posible y descubre cómo las respuestas conducen a una Skill o un Prompt.</p>
+      </div>
+      <div class="intro-note"><span class="note-icon">↗</span><span>Selecciona cualquier nodo<br>para ver sus detalles</span></div>
+    </section>
+
+    <section class="workspace" aria-label="Diagrama del árbol de decisiones">
+      <div class="diagram-panel">
+        <div class="toolbar">
+          <label class="search-box" for="search-input">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.8" cy="8.8" r="5.7"/><path d="m13 13 4 4"/></svg>
+            <input id="search-input" type="search" placeholder="Buscar una pregunta, opción o Skill…" autocomplete="off">
+            <kbd>/</kbd>
+          </label>
+          <div class="toolbar-actions">
+            <button class="icon-button" id="search-prev" type="button" title="Coincidencia anterior" aria-label="Coincidencia anterior">↑</button>
+            <span class="search-count" id="search-count" aria-live="polite"></span>
+            <button class="icon-button" id="search-next" type="button" title="Siguiente coincidencia" aria-label="Siguiente coincidencia">↓</button>
+            <span class="toolbar-divider"></span>
+            <button class="icon-button zoom-button" id="zoom-out" type="button" title="Alejar" aria-label="Alejar">−</button>
+            <span class="zoom-value" id="zoom-value">100%</span>
+            <button class="icon-button zoom-button" id="zoom-in" type="button" title="Acercar" aria-label="Acercar">+</button>
+            <button class="fit-button" id="fit-view" type="button"><span aria-hidden="true">⛶</span> Ajustar mapa</button>
+          </div>
+        </div>
+
+        <div class="legend" aria-label="Leyenda del diagrama">
+          <span><i class="legend-dot legend-start"></i>Inicio</span>
+          <span><i class="legend-dot legend-question"></i>Pregunta</span>
+          <span><i class="legend-dot legend-branch"></i>Opción</span>
+          <span><i class="legend-dot legend-result"></i>Resultado</span>
+          <span class="legend-hint"><span aria-hidden="true">⟷</span> Desplázate para explorar</span>
+        </div>
+
+        <div class="map-viewport" id="map-viewport" tabindex="0" aria-label="Mapa desplazable. Usa las barras de desplazamiento o los controles de zoom.">
+          <div class="map-loading" id="map-loading"><span class="loading-spinner"></span><span>Construyendo el mapa…</span></div>
+          <svg class="tree-svg" id="tree-svg" role="group" aria-label="Árbol interactivo de decisiones"></svg>
+        </div>
+        <footer class="map-footer"><span id="map-summary">Cada conexión representa una posible respuesta.</span><span>Haz clic en una tarjeta para inspeccionarla <span aria-hidden="true">↗</span></span></footer>
+      </div>
+
+      <aside class="details-panel" aria-label="Detalles del nodo seleccionado">
+        <div class="details-topline"><span class="details-label">PANEL DE DETALLES</span><span class="details-spark" aria-hidden="true">✳</span></div>
+        <div class="detail-empty" id="detail-empty">
+          <div class="empty-illustration" aria-hidden="true"><span>✳</span><span>⌁</span><span>✦</span></div>
+          <h2>Elige un nodo</h2>
+          <p>Selecciona una tarjeta del mapa para ver el recorrido y la información de esa rama.</p>
+        </div>
+        <div class="detail-content" id="detail-content" hidden>
+          <span class="node-type-pill" id="detail-type">PREGUNTA</span>
+          <h2 id="detail-title"></h2>
+          <div class="detail-path"><span class="detail-section-label">RECORRIDO</span><ol id="detail-breadcrumb"></ol></div>
+          <div class="detail-info" id="detail-info"></div>
+          <div class="detail-children" id="detail-children"></div>
+        </div>
+        <div class="panel-tip"><span class="tip-icon">⌘</span><span>Consejo: busca palabras clave<br>para encontrar una rama rápido.</span></div>
+      </aside>
+    </section>
+    <div class="page-footnote"><span>Diseñado para entender cada decisión de un vistazo.</span><span id="footer-stats"></span></div>
+  </main>
+  <script src="tree-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
